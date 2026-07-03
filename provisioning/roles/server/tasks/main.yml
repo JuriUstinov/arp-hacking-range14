@@ -1,7 +1,7 @@
 - name: Ermittle die MAC-Adresse des Clients dynamisch
   set_fact:
     client_mac: >-
-      {%- set mac = "" -}
+      {%- set mac = "" -%}
       {%- for interface in hostvars['client']['ansible_interfaces'] -%}
         {%- set interface_info = hostvars['client']['ansible_' ~ interface | replace('-', '_')] -%}
         {%- if interface_info and interface_info.ipv4 is defined and interface_info.ipv4.address == client_ip -%}
