@@ -1,14 +1,14 @@
 - name: Ermittle die MAC-Adresse des Clients dynamisch
   set_fact:
     client_mac: >-
-      {% set mac = json_query('[]') %}
-      {% for interface in hostvars['client']['ansible_interfaces'] %}
-        {% set interface_info = hostvars['client']['ansible_' ~ interface | replace('-', '_')] %}
-        {% if interface_info and interface_info.ipv4 is defined and interface_info.ipv4.address == client_ip %}
-          {{ interface_info.macaddress }}
-        {% endif %}
-      {% endfor %}
-  failed_when: client_mac == ""
+      {%- set mac = "" -}
+      {%- for interface in hostvars['client']['ansible_interfaces'] -%}
+        {%- set interface_info = hostvars['client']['ansible_' ~ interface | replace('-', '_')] -%}
+        {%- if interface_info and interface_info.ipv4 is defined and interface_info.ipv4.address == client_ip -%}
+          {{- interface_info.macaddress -}}
+        {%- endif -%}
+      {%- endfor -%}
+  failed_when: client_mac | trim == ""
 
 - name: Install attacker tools
   apt:
@@ -89,7 +89,7 @@
     dest: /opt/WiSpi/server.py
     mode: "0755"
     content: |
-      #!/#!/usr/bin/env python3
+      #!/usr/bin/env python3
       from http.server import SimpleHTTPRequestHandler, HTTPServer
       import os
 
