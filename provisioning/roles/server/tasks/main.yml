@@ -1,3 +1,15 @@
+- name: Ermittle die MAC-Adresse des Clients dynamisch
+  set_fact:
+    client_mac: >-
+      {% set mac = json_query('[]') %}
+      {% for interface in hostvars['client']['ansible_interfaces'] %}
+        {% set interface_info = hostvars['client']['ansible_' ~ interface | replace('-', '_')] %}
+        {% if interface_info and interface_info.ipv4 is defined and interface_info.ipv4.address == client_ip %}
+          {{ interface_info.macaddress }}
+        {% endif %}
+      {% endfor %}
+  failed_when: client_mac == ""
+
 - name: Install attacker tools
   apt:
     name:
